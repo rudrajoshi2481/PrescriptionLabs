@@ -3,6 +3,7 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import Appbar from "@/components/Appbar/Appbar";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -17,6 +18,7 @@ export default function RootLayout({
       <SessionProvider >
         <body className={poppins.className}>
           <Appbar />
+          <Toaster />
           {children}
         </body>
       </SessionProvider>

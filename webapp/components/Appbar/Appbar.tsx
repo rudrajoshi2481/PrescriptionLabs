@@ -6,8 +6,7 @@ import {NavigationSettings} from "./NavigationMenu"
 
 function Appbar() {
   const { data, status, update } = useSession();
-  //
-  console.log(data?.user);
+  
 
   return (
     <div className="flex m-2 w-[100vw] justify-between p-3 ">

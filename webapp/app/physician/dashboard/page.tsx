@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,18 +29,24 @@ import {
 import React, { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
+import axios from "axios";
+import { PrescriptionManager_URL } from "@/config";
+import { toast } from "sonner";
 
-function page() {
+function Page() {
   const [search, setsearch] = useState("");
   const [selectedFilter, setselectedFilter] = useState("email");
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [list, setList] = useState(["asdfasf", "asdfasdf"]);
-
+  const [btnLoading, setBtnLoading] = useState(false);
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
     phNumber: "",
     gender: "",
+    dobDay: "",
+    dobMonth: "",
+    dobYear: "",
     diet: "",
     address: "",
   });
@@ -49,10 +55,19 @@ function page() {
     e.preventDefault();
   };
 
-  const handelSubmit = (e:any) => {
-    e.preventDefault()
-    
-  }
+  const handelSubmit = (e: any) => {
+    e.preventDefault();
+    setBtnLoading(true);
+    axios
+      .post(`${PrescriptionManager_URL}/patient/create-patient`, { ...data })
+      .then(() => {
+        toast("Created Patient succesfully");
+      })
+      .catch((err) => {
+        toast("Error Creating User");
+      });
+    setBtnLoading(false);
+  };
 
   return (
     <div className="relative">
@@ -134,7 +149,7 @@ function page() {
                       <Label className="mb-2 ">Diet:</Label>
                       <Select
                         onValueChange={(e) => {
-                          setData({ ...data,diet: e });
+                          setData({ ...data, diet: e });
                         }}
                       >
                         <SelectTrigger className="w-[180px]">
@@ -149,13 +164,42 @@ function page() {
                       </Select>
                     </div>
                   </div>
+                  <div className="mt-5 flex gap-5">
+                    <div>
+                      <Label className="mb-2 ">Day:</Label>
+                      <Input
+                        type="number"
+                        placeholder="04"
+                        onChange={(e) => {
+                          setData({ ...data, dobDay: e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <Label className="mb-2 ">Month:</Label>
+                      <Input placeholder="08" type="number" />
+                    </div>
+                    <div>
+                      <Label className="mb-2 ">Year:</Label>
+                      <Input placeholder="2001" type="number"/>
+                    </div>
+                  </div>
                   <div className="mt-5">
                     <Label className="mb-2 ">Address:</Label>
-                    <Textarea placeholder="23, maheshwar nagar socity vadodara" onChange={(e) => {
-                          setData({ ...data,address: e.target.value });
-                    }}/>
+                    <Textarea
+                      placeholder="23, maheshwar nagar socity vadodara"
+                      onChange={(e) => {
+                        setData({ ...data, address: e.target.value });
+                      }}
+                    />
                   </div>
-                  <Button type="submit" className="mt-3 float-right">Submit</Button>
+                  <Button
+                    disabled={btnLoading}
+                    type="submit"
+                    className="mt-3 float-right"
+                  >
+                    Submit
+                  </Button>
                 </form>
               </DialogDescription>
             </AlertDialogHeader>
@@ -192,4 +236,4 @@ const DisplayCard = () => {
   );
 };
 
-export default page;
+export default Page;

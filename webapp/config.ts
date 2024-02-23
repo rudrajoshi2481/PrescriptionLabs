@@ -1,1 +1,1 @@
-export const PrescriptionManager_URL = ""
+export const PrescriptionManager_URL = "http://localhost:9001"
