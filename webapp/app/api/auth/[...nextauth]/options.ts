@@ -10,6 +10,11 @@ export const optionsAuth: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
+
+        // check account if there
+
+        // if already present the return s
+
         const dummyUser = {
           id:"5123",
           email:"rudra@gmail.com",

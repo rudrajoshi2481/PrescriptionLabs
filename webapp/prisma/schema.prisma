@@ -13,6 +13,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  firstName    String
+  lastName     String
+  password     String
+  email        String
+  createdAt    String
+  dob          DOB
+  gender       String?
+  nationality  String?
+  cast         String?
+  address      String?
+  pincode      String?
+  coordinates  Json?
+  vegan        Boolean?
+  age          Int?
+  phNumber     Int
+  offSpringsId String[]
+  parentsId    ParentsId?
+  giteaId      String
+  giteaPasswd  String
+}
 
+type ParentsId {
+  fatherId String
+  motherId String
+}
 
-
+type DOB{
+  date Int
+  month Int
+  year Int
+}
