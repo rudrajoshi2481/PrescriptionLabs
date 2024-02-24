@@ -10,6 +10,9 @@ import React from "react";
 
 const ProteinModel = dynamic(() => import("@/components/ProteinHomePage/ModalBox"), {
   ssr: false,
+  loading:() => {
+    return <p className="text-3xl justify-center flex mt-52">Loading ...</p>
+  }
 });
 function page() {
   return (

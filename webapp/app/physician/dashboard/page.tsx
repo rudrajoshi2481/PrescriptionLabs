@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,29 +26,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { PrescriptionManager_URL } from "@/config";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 function Page() {
   const [search, setsearch] = useState("");
   const [selectedFilter, setselectedFilter] = useState("email");
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [list, setList] = useState(["asdfasf", "asdfasdf"]);
+  const [list, setList] = useState([]);
   const [btnLoading, setBtnLoading] = useState(false);
   const [data, setData] = useState({
     firstName: "",
+    userId: "",
     lastName: "",
     phNumber: "",
     gender: "",
     dobDay: "",
     dobMonth: "",
     dobYear: "",
+    cast: "",
     diet: "",
+    email: "",
+    nationality: "",
     address: "",
+    pincode: "",
+    userName: "",
   });
 
   const handelSearchChange = (e: any) => {
@@ -57,6 +64,7 @@ function Page() {
 
   const handelSubmit = (e: any) => {
     e.preventDefault();
+
     setBtnLoading(true);
     axios
       .post(`${PrescriptionManager_URL}/patient/create-patient`, { ...data })
@@ -68,6 +76,23 @@ function Page() {
       });
     setBtnLoading(false);
   };
+
+  const getUserList = ()  => {
+    axios
+      .get(`${PrescriptionManager_URL}/patient/list`)
+      .then((res) => {
+        const resp = JSON.parse(res.data.msg);
+        setList(resp);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+
+  useEffect(() => {
+    getUserList()
+  }, [search]);
 
   return (
     <div className="relative">
@@ -90,7 +115,7 @@ function Page() {
           className="max-w-[60vw]"
           placeholder="Patient Id"
         />
-        <Dialog defaultOpen={true}>
+        <Dialog>
           <DialogTrigger>
             <Button className="ml-3">Create Patient</Button>
           </DialogTrigger>
@@ -120,6 +145,24 @@ function Page() {
                     </div>
                   </div>
                   <div className="my-5">
+                    <Label className="mb-2 ">UserName:</Label>
+                    <Input
+                      placeholder="rudrajoshi5123"
+                      onChange={(e) => {
+                        setData({ ...data, userName: e.target.value });
+                      }}
+                    />
+                  </div>
+                  <div className="my-5">
+                    <Label className="mb-2 ">Email:</Label>
+                    <Input
+                      placeholder="rudra@gmail.com"
+                      onChange={(e) => {
+                        setData({ ...data, email: e.target.value });
+                      }}
+                    />
+                  </div>
+                  <div className="my-5">
                     <Label className="mb-2 ">Phone Number:</Label>
                     <Input
                       placeholder="+91 6354545454"
@@ -145,6 +188,7 @@ function Page() {
                         </SelectContent>
                       </Select>
                     </div>
+
                     <div>
                       <Label className="mb-2 ">Diet:</Label>
                       <Select
@@ -163,6 +207,22 @@ function Page() {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div>
+                      <Label className="mb-2 ">Nationality :</Label>
+                      <Select
+                        onValueChange={(e) => {
+                          setData({ ...data, nationality: e });
+                        }}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Nationality" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="indian">Indian</SelectItem>
+                          <SelectItem value="americal">American</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <div className="mt-5 flex gap-5">
                     <div>
@@ -177,12 +237,33 @@ function Page() {
                     </div>
                     <div>
                       <Label className="mb-2 ">Month:</Label>
-                      <Input placeholder="08" type="number" />
+                      <Input
+                        placeholder="08"
+                        type="number"
+                        onChange={(e) => {
+                          setData({ ...data, dobMonth: e.target.value });
+                        }}
+                      />
                     </div>
                     <div>
                       <Label className="mb-2 ">Year:</Label>
-                      <Input placeholder="2001" type="number"/>
+                      <Input
+                        placeholder="2001"
+                        type="number"
+                        onChange={(e) => {
+                          setData({ ...data, dobYear: e.target.value });
+                        }}
+                      />
                     </div>
+                  </div>
+                  <div className="mt-5">
+                    <Label className="mb-2 ">pincode:</Label>
+                    <Input
+                      placeholder="23, maheshwar nagar socity vadodara"
+                      onChange={(e) => {
+                        setData({ ...data, pincode: e.target.value });
+                      }}
+                    />
                   </div>
                   <div className="mt-5">
                     <Label className="mb-2 ">Address:</Label>
@@ -208,27 +289,31 @@ function Page() {
       </div>
 
       <div className="mx-32 mt-12 flex flex-wrap  gap-4 ">
-        <DisplayCard />
-        <DisplayCard />
-        <DisplayCard />
-        <DisplayCard />
-        <DisplayCard />
-        <DisplayCard />
-        <DisplayCard />
+        {list.map((e: any) => {
+          return (
+            <>
+              <DisplayCard email={e.email} username={e.username} />
+            </>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-const DisplayCard = () => {
+const DisplayCard = ({ email, username }: any) => {
+
+  const router = useRouter()
+
   return (
     <div>
-      <Card className="min-w-[250px] max-w-[350px] rounded-sm hover:cursor-pointer shadow-none">
+      <Card className="min-w-[250px] max-w-[350px] rounded-sm hover:cursor-pointer hover:bg-slate-100 shadow-none" onClick={() => {
+        router.push(`/physician/dashboard/${username}`)
+      }}>
         <CardHeader>
-          <CardTitle>Card Title</CardTitle>
+          <CardTitle>{email}</CardTitle>
           <CardDescription>
-            <p>+91 8155046603</p>
-            <p>23, maheshwar nagar socity subhanpura vadodara...</p>
+            <p>{username}</p>
           </CardDescription>
         </CardHeader>
       </Card>
