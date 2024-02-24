@@ -1,83 +1,79 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import { CreateGiteaUser } from "../logic/CreateGiteaUser";
+import { listAllEmails } from "../logic/listEmails";
+import { CreatePatientRepo } from "../logic/createPatientRepo";
 const router = express.Router();
 const prisma = new PrismaClient();
 
 router.post("/create-patient", (req, res) => {
   console.log("Create-Patient", req.body);
 
+  const {
+    firstName,
+    lastName,
+    phNumber,
+    gender,
+    diet,
+    pincode,
+    address,
+    dobMonth,
+    dobYear,
+    userName,
+    dobDate,
+    email,
+    nationality,
+  }: any = req.body;
+  res.send("Working");
+  prisma.user
+    .create({
+      data: {
+        createdAt: Date.now().toString(),
+        dob: {
+          date: dobDate,
+          month: dobMonth,
+          year: dobYear,
+        },
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        phNumber: phNumber,
+        userName: userName,
+        address: address,
+        coordinates: {
+          latitude: "5123",
+          longitude: "5123",
+        },
+        gender: gender,
+        nationality: nationality,
+        pincode: pincode,
+        vegan: null,
+      },
+    })
+    .then(async (rep) => {
+      CreateGiteaUser({ email, userName });
+      const repp = await CreatePatientRepo({ userName });
+      res.send({ msg: "User Created", status: 200 });
+    })
+    .catch((err:any) => {
+        console.log(err)
+      res.send({ msg: "Error Creating User", status: 400 });
+    });
+});
 
-//   prisma.user.create({
-//     data: {
-//       createdAt: Date.now().toString(),
-//       dob: {
-//         date: 7,
-//         month: 5,
-//         year: 2004,
-//       },
-//       email: "rudrajoshi@gmai.com",
-//       firstName: "rudra",
-//       lastName: "joshi",
-//       password: "51235123",
-//       giteaId: "someting",
-//       giteaPasswd: "passwd",
-//       phNumber: 8155046603,
-//       address: "i live hear",
-//       age: 23,
-//       cast: "hindu",
-//       coordinates: {
-//         latitude:5123,
-//         longitude:5123,
-//       },
-//       gender: "male",
-//       nationality: "indian",
-//       offSpringsId: ["asdfaf"],
-//       parentsId: {
-//         fatherId:"asdfa",
-//         motherId:"asdfasd"
-//       },
-//       pincode: "51232",
-//       vegan: true,
-//     },
-  }).then((rep) => {
-    console.log("Create-Patient REP",rep)
-  }).catch(err => {
-    console.log("Create-Patient ERROR",err)
-  });
+router.get("/list", async (req, res) => {
+  const rep = await listAllEmails();
+  console.log(rep.data);
+  res.send({ msg: JSON.stringify(rep.data), status: 200 });
+});
 
-//   prisma.user.create({
-//     data: {
-//       createdAt: Date.now().toString(),
-//       dob: {
-//         date: req.body.dobDate,
-//         month: req.body.dobMonth,
-//         year: req.body.dobYear,
-//       },
-//       email: req.body.email,
-//       firstName: req.body.firstName,
-//       lastName: req.body.lastName,
-//       password: req.body.password,
-//       giteaId: req.body.giteaId,
-//       giteaPasswd: req.body.giteaPasswd,
-//       phNumber: req.body.phNumber,
-//       address: req.body.address,
-//       age: req.body.age,
-//       cast: req.body.cast,
-//       coordinates: req.body.coordinates,
-//       gender: req.body.gender,
-//       nationality: req.body.nationality,
-//       offSpringsId: req.body.offSpringsId,
-//       parentsId: req.body.parentsId,
-//       pincode: req.body.pincode,
-//       vegan: req.body.vegan,
-//     },
-//   }).then((rep) => {
-//     console.log("Create-Patient REP",rep)
-//   }).catch(err => {
-//     console.log("Create-Patient ERROR",err)
-//   });
+router.post("/patient-repo-details", async (req, res) => {
+  const user = req.body.user;
+  //   const rep = await getPatientDetails({ user });
 
-  res.send("done");
+  console.log("patient-repo-details");
+
+  res.send({ msg: "", status: 200 });
 });
 
 router.get("/delete-patient", (req, res) => {

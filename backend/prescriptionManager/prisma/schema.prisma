@@ -14,31 +14,31 @@ datasource db {
 }
 
 model User {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  firstName    String
-  lastName     String
-  password     String
-  email        String
-  createdAt    String
-  dob          DOB
-  gender       String?
-  nationality  String?
-  cast         String?
-  address      String?
-  pincode      String?
-  coordinates  Coordinates
-  vegan        Boolean?
-  age          Int?
-  phNumber     Int
-  offSpringsId String[]
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String
+  lastName    String
+  password    String?
+  email       String
+  createdAt   String
+  dob         DOB
+  gender      String?
+  nationality String?
+  userName    String
+  address     String?
+  pincode     String?
+  coordinates Coordinates
+  vegan       String?
+
+  phNumber     String
+  offSpringsId String?
   parentsId    ParentsId?
-  giteaId      String
-  giteaPasswd  String
+  giteaId      String?
+  giteaPasswd  String?
 }
 
 type Coordinates {
-  longitude Int
-  latitude  Int
+  longitude String
+  latitude  String
 }
 
 type ParentsId {
@@ -47,7 +47,7 @@ type ParentsId {
 }
 
 type DOB {
-  date  Int
-  month Int
-  year  Int
+  date  String?
+  month String?
+  year  String?
 }

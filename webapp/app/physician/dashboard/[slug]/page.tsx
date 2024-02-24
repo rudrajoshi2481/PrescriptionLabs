@@ -5,7 +5,7 @@ import { PrescriptionManager_URL } from "@/config";
 import axios from "axios";
 import React, { useEffect } from "react";
 
-function page({ params }: { params: { slug: string } }) {
+function Page({ params }: { params: { slug: string } }) {
   // get all the files and folders
 
   useEffect(() => {
@@ -34,7 +34,7 @@ function page({ params }: { params: { slug: string } }) {
   );
 }
 
-export default page;
+export default Page;
 
 // export default function Page({ params }: { params: { slug: string } }) {
 //   return <div>My Post: {params.slug}</div>;
